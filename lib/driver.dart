@@ -1,10 +1,25 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:transpporter_app_test/availableTripsView.dart';
+import 'package:transpporter_app_test/databaseModels/trips.dart';
+import 'package:transpporter_app_test/databaseModels/userTrips.dart';
 import 'Login.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_map_polyline/google_map_polyline.dart';
 import 'package:geolocator/geolocator.dart';
+
+
+
+List<usertrips> usersOfAtrip =[
+new usertrips(id: 1,
+tripId: 1,
+userId:1,
+passengerNum:1,
+amount:22,
+isfinished:false,
+hasDiscount:false)
+];
 
 class DriverMain extends StatelessWidget{
   Set<Marker> markers = {};
@@ -35,7 +50,62 @@ class DriverMain extends StatelessWidget{
      @override
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
- 
+    var curTime =  DateTime.now();
+
+    trips trip= avaialableTrips.where((element) => (element.driverId == curUser.id 
+    && 0<((element.tripTime.millisecondsSinceEpoch-curTime.millisecondsSinceEpoch)/1000/60) 
+    && ((element.tripTime.millisecondsSinceEpoch-curTime.millisecondsSinceEpoch)/1000/60) <=30)).first;
+    var numOfPassengers= usersOfAtrip.where((element) => element.tripId == trip.id).toList();
+    var totalCost =0.0;
+
+    for (var t in numOfPassengers) {
+      totalCost += t.amount;
+    }
+
+    Widget driverW = Container();
+    
+    if(trip != null )
+    {
+      driverW = Container(child: AlertDialog(
+                              title: Text("next Trip"),
+                              actions:[
+                            MaterialButton(
+                              elevation: 5.0,
+                              onPressed: (){
+                               
+                              },
+                              child: Text("Submit"),
+                              )
+                              ],
+                              content: Table(
+                            children:[
+                                      TableRow(
+                                        children: [
+                                          TableCell(child:Text("Trip:")),
+                                          TableCell(child:Text(trip.tripText))
+                                        ]
+                                      ),
+                                          TableRow(
+
+                                        children: [
+                                        TableCell(child:Text("trip Time:")),
+                                        TableCell(child:  Text(trip.tripTime.toString())),
+                                        ]
+                                      ),
+                                      TableRow(
+                                        children: [
+                                          TableCell(child:  Text("Passengers:")),
+                                          TableCell(child:Text(numOfPassengers.length.toString() + " Passenger")),
+                                      ]
+                            
+                                      ),
+                            ]
+                          ),
+
+                          ));
+                          
+                    
+    }
       return Scaffold(
       appBar: AppBar(
         
@@ -47,11 +117,16 @@ class DriverMain extends StatelessWidget{
         child: Column(
           children: [
             Expanded(child: 
-               Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                child: Column(
+               
+            DrawerHeader(
+  
+                child: Row(
                   children: [
-                     Text(""),
+                     Image(
+                width: 100,
+                height: 100,       
+                       image: AssetImage('images/user_icon_png_person_user_profile_icon_20.png')),
+                     Text(curUser.username),
 
                   ]
                 ),
@@ -107,9 +182,7 @@ class DriverMain extends StatelessWidget{
          markers: markers != null ? Set<Marker>.from(markers) : null,
         polylines: polylinePoints != null ? Set<Polyline>.from(polylinePoints) : null,
       ),
-      Container(
-
-      )
+     driverW 
         ]
       ),
       );

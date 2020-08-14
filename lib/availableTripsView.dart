@@ -7,16 +7,7 @@ import 'package:transpporter_app_test/databaseModels/userTrips.dart';
 import 'package:transpporter_app_test/dialog.dart';
 import 'Login.dart';
 
-List<trips> avaialableTrips = [new trips(
-  id: 1, startPointLat:30.31231, startPointLng:30.3123123, 
-   endPointLat:31.312313, 
-   endPointLng:31.41241, 
-   routeLength:111, 
-   price:11,
-   tripTime:DateTime.now()
-  ,  driverId:2
-  ,  tripText:"M to M"
-)];
+
 
 
 class AvailableTrips extends StatelessWidget {
@@ -35,7 +26,7 @@ class AvailableTrips extends StatelessWidget {
               String titleText =index >= 0 ? avaialableTrips[index].tripText: "no Availabel Trips"; 
              return ListTile(
                   title:Text(titleText),
-                  onLongPress:(trips tr) 
+                  onTap:()=>(trips tr) 
                       {  print("tripText:"+tr.tripText);
                       Future.delayed(Duration(milliseconds: 2000)).then((value) => {
                       
@@ -153,7 +144,7 @@ class USERSTrips extends StatelessWidget {
             {
              return MaterialButton(
                   child:Text((avaialableTrips.where((element) => element.id == curUserList[index].tripId)).first.tripText),
-                  onPressed:(trips tr)
+                  onPressed:()=>(trips tr)
                       {
                         Future.delayed(Duration(milliseconds: 2000)).then((value) => {
 
@@ -169,8 +160,8 @@ class USERSTrips extends StatelessWidget {
                                 Text(tr.price.toString()),
                             MaterialButton(
                               elevation: 5.0,
-                              onPressed: (){
-                                 
+                              onPressed: ()=>(){
+                                u_route(context,[tr.startPointLat,tr.startPointLng],[tr.endPointLat,tr.endPointLng]);                    
                               },
                               child: Text("Submit"),
                               )
@@ -231,7 +222,7 @@ class USERSTrips extends StatelessWidget {
             {
              return ListTile(
                   title:Text((avaialableTrips.where((element) => element.id == curUserList[index].tripId)).first.tripText),
-                  onTap:(trips tr)
+                  onTap:()=>(trips tr)
                       {
                         // DialogsCreator().createDialog(
                         //   context,
@@ -302,6 +293,22 @@ class USERSTrips extends StatelessWidget {
       ),
     );
   }
+static Future<void> u_route(BuildContext context,List<double> stLatLngs,List<double> enLatlngs) {
+                  print("creating Route");
+                 Navigator.pushNamed(
+                   context,
+                   "/c",
+                   arguments:{"nasrCity_Badr":[stLatLngs,enLatlngs],
+                   "drawRoute":true});
+              //         MaterialPageRoute(builder: (context) => MyHomePage(),
+              //                 settings: RouteSettings(
+              //             arguments: {"nasrCity_Badr":[[30.0324825,31.338229],[30.1350694,31.7117137]]
+              //             ,"drawRoute":true},
+              //           ),
+              //  ),
+              //       ); 
+    }
+
 }
 
 class DriverAvailableTrips extends StatelessWidget {
@@ -316,8 +323,8 @@ class DriverAvailableTrips extends StatelessWidget {
           itemCount: avaialableTrips.length,
           itemBuilder:(context,index){ 
              return ListTile(
-                  title:Text("avaialableTrips[index].tripText"),
-                  onTap:(trips tr)
+                  title:Text(avaialableTrips[index].tripText),
+                  onTap:()=>(trips tr)
                       {
                         
                       }(avaialableTrips[index])

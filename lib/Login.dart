@@ -2,12 +2,23 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:transpporter_app_test/availableTripsView.dart';
+import 'package:transpporter_app_test/databaseModels/trips.dart';
 import 'package:transpporter_app_test/driver.dart';
 import 'main.dart';
 import 'databaseModels/users.dart';
 void main() {
   runApp(MyApp());
 }
+List<trips> avaialableTrips = [new trips(
+  id: 1, startPointLat:30.31231, startPointLng:30.3123123, 
+   endPointLat:31.312313, 
+   endPointLng:31.41241, 
+   routeLength:111, 
+   price:11,
+   tripTime:DateTime(2020,8,14,16,00)
+  ,  driverId:2
+  ,  tripText:"M to M"
+)];
 user curUser = new user();
 
 class MyApp extends StatelessWidget {
@@ -41,6 +52,7 @@ class MyApp extends StatelessWidget {
        "/d":(BuildContext context) =>DriverMain(),
        "/e":(BuildContext context) =>AvailableTrips(),
 
+
      
      },
     );
@@ -66,6 +78,9 @@ class MyLoginPage extends StatefulWidget {
   }
   class _MyLoginPageState extends State<MyLoginPage> {
     int _counter = 0;
+    Color btnColor = Colors.grey;
+        bool driver = false;
+
      void _incrementCounter() {
     setState(() {
    
@@ -84,8 +99,7 @@ class MyLoginPage extends StatefulWidget {
        TextEditingController phoneEditingController = new TextEditingController();
        TextEditingController emailEditingController = new TextEditingController();
        TextEditingController passwordEditingController = new TextEditingController();
-        bool driver = false;
-        Color btnColor = Colors.grey;
+    
         return Scaffold( 
         
         body:PageView(
@@ -120,24 +134,14 @@ class MyLoginPage extends StatefulWidget {
                     TextField(
                       keyboardType: TextInputType.visiblePassword,
                       controller: passwordEditingController,),
-                      MaterialButton(
-                        child: Text("driver"),
-                        
-                        onPressed:(){
-                          if(driver)
-                          {
-                            driver = false;
-                            btnColor = Colors.grey;
-                          }else{
-                            driver = true;
-                            btnColor = Colors.blue;
-
-                          }
-                        print("driver ?: "+ driver.toString());
-                                      return;
-                                            
+                      CheckboxListTile(
+                        title: Text("driver"),
+                        value: driver,
+                        onChanged:(value){
+                        setState.call(() => driver =value  );
+                          print(driver.toString());                  
                                              },
-                        color: btnColor,
+                        
                       ),
                     FlatButton(onPressed: (){
                       curUser.id= driver? 2: 1;

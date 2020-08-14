@@ -110,33 +110,46 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: Drawer(
         child: Column(
           children: [
-            Expanded(child: 
-               Container(
-                width: MediaQuery.of(context).size.width * 0.85,
-                child: Column(
+             
+               DrawerHeader(
+                
+                child: Row(
                   children: [
+                     Image(
+                        width: 100,
+                        height: 100,       
+
+                       image: AssetImage('images/user_icon_png_person_user_profile_icon_20.png')),
                      Text(curUser.username),
 
                   ]
                 ),
-              )
               ),
+              
             Expanded(child: 
-             ListView(children: [
-                ListTile(
+             ListView(
+                
+               children: [
+                MaterialButton(
                   
-                  title: new Text("Home"),
+                  child: new Text("Home"),
+                  onPressed: (){
+
+                  },
                 ),
-                ListTile(
-                  title: new Text("Routes"),
-                  onTap: () => Navigator.of(context).pushNamed("/a"),
+                MaterialButton(
+                  child: new Text("Routes"),
+                  onPressed: () => Navigator.of(context).pushNamed("/a"),
                   
                 ),
-                ListTile(
-                  title: new Text("Your Trips"),
-                  onTap: () => Navigator.of(context).pushNamed("/b"),
+                MaterialButton(
+                  child: new Text("Your Trips"),
+                  onPressed: () => Navigator.of(context).pushNamed("/b"),
                 ),
-           
+                MaterialButton(
+                  child: new Text("logout"),
+                  onPressed: () => Navigator.popUntil(context, ModalRoute.withName('/')),
+                ),
               ]),
               )
             
