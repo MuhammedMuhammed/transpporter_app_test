@@ -8,6 +8,7 @@ class usertrips{
   final double amount;
   final bool isfinished;
   final bool hasDiscount;
+  final bool isPaid;
   usertrips(
     {
       this.id,
@@ -17,6 +18,7 @@ class usertrips{
       this.amount,
       this.isfinished = false,
       this.hasDiscount = false,
+      this.isPaid = false
     }
   ){
     

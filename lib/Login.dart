@@ -2,11 +2,14 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:transpporter_app_test/availableTripsView.dart';
+import 'package:transpporter_app_test/databaseModels/dbHolder.dart';
 import 'package:transpporter_app_test/databaseModels/trips.dart';
 import 'package:transpporter_app_test/driver.dart';
+import 'package:transpporter_app_test/paymentMethods.dart';
 import 'main.dart';
 import 'databaseModels/users.dart';
 void main() {
+  dbHolder().tableCreates();
   runApp(MyApp());
 }
 List<trips> avaialableTrips = [new trips(
@@ -15,7 +18,7 @@ List<trips> avaialableTrips = [new trips(
    endPointLng:31.41241, 
    routeLength:111, 
    price:11,
-   tripTime:DateTime(2020,8,14,16,00)
+   tripTime:DateTime(2020,8,14,18,00)
   ,  driverId:2
   ,  tripText:"M to M"
 )];
@@ -51,7 +54,7 @@ class MyApp extends StatelessWidget {
        "/b":(BuildContext context) =>USERSTrips(),
        "/d":(BuildContext context) =>DriverMain(),
        "/e":(BuildContext context) =>AvailableTrips(),
-
+       "/f":(BuildContext context) =>PaymentMethods()
 
      
      },
@@ -99,50 +102,158 @@ class MyLoginPage extends StatefulWidget {
        TextEditingController phoneEditingController = new TextEditingController();
        TextEditingController emailEditingController = new TextEditingController();
        TextEditingController passwordEditingController = new TextEditingController();
-    
+        
         return Scaffold( 
         
         body:PageView(
+          physics: NeverScrollableScrollPhysics(),
+          allowImplicitScrolling: false,
           children: <Widget>[
             Container(
+              color: Colors.lime,
               child: Center(
                 child:Column(
-                
+                mainAxisAlignment: MainAxisAlignment.end,
                 children:[
-                  TextField(
-                    keyboardType: TextInputType.phone,
-                    controller: phoneEditingController,),
-                    FlatButton(onPressed: (){
-                      print("hasClients "+pageController.hasClients.toString());
+                  ButtonTheme(
+                    minWidth: MediaQuery.of(context).size.width - 50,
+                   child:FlatButton(
+                    color: Colors.white,
+
+                     materialTapTargetSize: MaterialTapTargetSize.padded,
+                     onPressed: (){
+
+                      driver =true;
+                      if(pageController.hasClients){
+                        Future.delayed(Duration(milliseconds: 50),(){
+                      pageController.animateToPage(3, duration: Duration(milliseconds: 1000), curve: Curves.easeInOut );
+                        });
+                      }
+                    }, child: Text("Login"))
+                    ),
+                    ButtonTheme(
+                    minWidth: MediaQuery.of(context).size.width - 50,
+                   child:FlatButton(
+                    color: Colors.white,
+
+                     materialTapTargetSize: MaterialTapTargetSize.padded,
+                     onPressed: (){
+
                       if(pageController.hasClients){
                         Future.delayed(Duration(milliseconds: 50),(){
                       pageController.animateToPage(1, duration: Duration(milliseconds: 1000), curve: Curves.easeInOut );
                         });
                       }
-                    }, child: Text("next"))
-              ]),
+                    }, child: Text("Register"))
+                    ),
+                    
+                ]
+                 )
+                  )
+                ),
+            Container(
+              color: Colors.lime,
+              child: Center(
+                child:Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children:[
+                  ButtonTheme(
+                    minWidth: MediaQuery.of(context).size.width - 50,
+                   child:FlatButton(
+                    color: Colors.white,
+
+                     materialTapTargetSize: MaterialTapTargetSize.padded,
+                     onPressed: (){
+
+                      driver =true;
+                      if(pageController.hasClients){
+                        Future.delayed(Duration(milliseconds: 50),(){
+                      pageController.animateToPage(2, duration: Duration(milliseconds: 1000), curve: Curves.easeInOut );
+                        });
+                      }
+                    }, child: Text("driver"))
+                    ),
+                  ButtonTheme(
+                    minWidth: MediaQuery.of(context).size.width - 50,
+                   child:FlatButton(
+                    color: Colors.white,
+                     
+                     onPressed: (){
+                      driver =false;
+                      
+                      if(pageController.hasClients){
+                        Future.delayed(Duration(milliseconds: 50),(){
+                      pageController.animateToPage(2, duration: Duration(milliseconds: 1000), curve: Curves.easeInOut );
+                        });
+                      }
+                    }, child: Text("passengers"))
+                  ),
+
+
+                               ]),
               ),
        
             ),
             Container(
+              color: Colors.lime,
               child: Center(
-                child:Column(
+
+                child: Column(
+                   mainAxisAlignment: MainAxisAlignment.center,
+
                   children:<Widget>[
-                    TextField(
-                      keyboardType: TextInputType.emailAddress,
-                      controller: emailEditingController),
-                    TextField(
-                      keyboardType: TextInputType.visiblePassword,
-                      controller: passwordEditingController,),
-                      CheckboxListTile(
-                        title: Text("driver"),
-                        value: driver,
-                        onChanged:(value){
-                        setState.call(() => driver =value  );
-                          print(driver.toString());                  
-                                             },
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                    child:TextField(
+                      decoration: InputDecoration(
                         
+                        filled: true,
+                        border:InputBorder.none,
+                        fillColor: Colors.white,
+                        hintText: "Email",
+                      )
+                      ,
+                      keyboardType: TextInputType.emailAddress,
+                      controller: emailEditingController)),
+                  Padding(
+                      padding: EdgeInsets.all(5),
+                    child:TextField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        border: InputBorder.none,
+                        fillColor: Colors.white,
+                        hintText: "Password",
                       ),
+                      keyboardType: TextInputType.visiblePassword,
+                      controller: passwordEditingController,)),
+                    
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                    child:TextField(
+                    decoration: InputDecoration(
+                        filled: true,
+                        border: InputBorder.none,
+                        fillColor: Colors.white,
+                        hintText: "Phone",
+                      ),
+                    keyboardType: TextInputType.phone,
+                    controller: phoneEditingController,)),
+                      // CheckboxListTile(
+                      //   key: Key("isDriver"),
+                      //   value: driver,
+                      //   onChanged:(value){
+                          
+                      //   setState((){ driver =value;
+                      
+                      //   emailEditingController.text = emailEditingController.text;
+                      //   passwordEditingController.text = passwordEditingController.text;  });
+                      //     print(driver.toString());                  
+                      //                        }
+                      //                        ,
+                      //   title: Text("driver"),
+                      //   controlAffinity: ListTileControlAffinity.leading,
+                        
+                      // ),
                     FlatButton(onPressed: (){
                       curUser.id= driver? 2: 1;
                       curUser.username= "MUHD";
@@ -159,6 +270,76 @@ class MyLoginPage extends StatefulWidget {
 
                     }
                     }, child: Text("submit"))
+
+                  ]
+                )), 
+                
+              ),
+                          Container(
+              color: Colors.lime,
+              child: Center(
+
+                child: Column(
+                   mainAxisAlignment: MainAxisAlignment.center,
+
+                  children:<Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(5),
+                    child:TextField(
+                      decoration: InputDecoration(
+                        
+                        filled: true,
+                        border:InputBorder.none,
+                        fillColor: Colors.white,
+                        hintText: "Email",
+                      )
+                      ,
+                      keyboardType: TextInputType.emailAddress,
+                      controller: emailEditingController)),
+                  Padding(
+                      padding: EdgeInsets.all(5),
+                    child:TextField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        border: InputBorder.none,
+                        fillColor: Colors.white,
+                        hintText: "Password",
+                      ),
+                      keyboardType: TextInputType.visiblePassword,
+                      controller: passwordEditingController,)),
+                    
+                                   // CheckboxListTile(
+                      //   key: Key("isDriver"),
+                      //   value: driver,
+                      //   onChanged:(value){
+                          
+                      //   setState((){ driver =value;
+                      
+                      //   emailEditingController.text = emailEditingController.text;
+                      //   passwordEditingController.text = passwordEditingController.text;  });
+                      //     print(driver.toString());                  
+                      //                        }
+                      //                        ,
+                      //   title: Text("driver"),
+                      //   controlAffinity: ListTileControlAffinity.leading,
+                        
+                      // ),
+                    FlatButton(onPressed: (){
+                      curUser.id= driver? 2: 1;
+                      curUser.username= "MUHD";
+                      curUser.password= passwordEditingController.text;
+                      curUser.userrole= driver? userRole.driver: userRole.passenger;
+                      curUser.birthDate= DateTime.parse("1969-07-20 20:18:04");
+                      curUser.userImg="";
+                      curUser.email= emailEditingController.text;
+                    print("here");
+                    if(driver){  
+                      Navigator.of(context).pushNamed("/d");
+                    }else{
+                      Navigator.of(context).pushNamed("/c");
+
+                    }
+                    }, child: Text("Login"))
 
                   ]
                 )), 

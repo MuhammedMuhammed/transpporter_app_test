@@ -51,11 +51,11 @@ class DriverMain extends StatelessWidget{
   Widget build(BuildContext context) {
     Map args = ModalRoute.of(context).settings.arguments;
     var curTime =  DateTime.now();
-
-    trips trip= avaialableTrips.where((element) => (element.driverId == curUser.id 
+    List<trips> nextDriverTrips =avaialableTrips.where((element) => (element.driverId == curUser.id 
     && 0<((element.tripTime.millisecondsSinceEpoch-curTime.millisecondsSinceEpoch)/1000/60) 
-    && ((element.tripTime.millisecondsSinceEpoch-curTime.millisecondsSinceEpoch)/1000/60) <=30)).first;
-    var numOfPassengers= usersOfAtrip.where((element) => element.tripId == trip.id).toList();
+    && ((element.tripTime.millisecondsSinceEpoch-curTime.millisecondsSinceEpoch)/1000/60) <=30)).toList();
+    trips trip=nextDriverTrips.length>0? nextDriverTrips.first:null;
+    var numOfPassengers= trip!= null? usersOfAtrip.where((element) => element.tripId == trip.id).toList():[];
     var totalCost =0.0;
 
     for (var t in numOfPassengers) {
@@ -66,13 +66,13 @@ class DriverMain extends StatelessWidget{
     
     if(trip != null )
     {
-      driverW = Container(child: AlertDialog(
+      driverW = Container(child: AlertDialog(        
                               title: Text("next Trip"),
                               actions:[
                             MaterialButton(
                               elevation: 5.0,
                               onPressed: (){
-                               
+                                _route(context, [trip.startPointLat,trip.startPointLng], [trip.endPointLat,trip.endPointLng]);
                               },
                               child: Text("Submit"),
                               )
@@ -116,22 +116,23 @@ class DriverMain extends StatelessWidget{
       drawer: Drawer(
         child: Column(
           children: [
-            Expanded(child: 
+            
                
             DrawerHeader(
   
                 child: Row(
                   children: [
                      Image(
-                width: 100,
-                height: 100,       
-                       image: AssetImage('images/user_icon_png_person_user_profile_icon_20.png')),
+                        width: 100,
+                        height: 100,       
+                       image: AssetImage('images/user_icon_png_person_user_profile_icon_20.png')
+                       ),
                      Text(curUser.username),
 
                   ]
                 ),
               )
-              ),
+              ,
             Expanded(child: 
              ListView(children: [
                 ListTile(
@@ -145,6 +146,10 @@ class DriverMain extends StatelessWidget{
                 ListTile(
                   title: new Text("Your Trips"),
                   onTap: () => Navigator.of(context).pushNamed("/b"),
+                ),
+                ListTile(
+                  title: new Text("logout"),
+                  onTap: () => Navigator.popUntil(context, ModalRoute.withName('/')),
                 ),
            
               ]),
@@ -186,7 +191,22 @@ class DriverMain extends StatelessWidget{
         ]
       ),
       );
+
   }
+   Future<void> _route(BuildContext context, List<double> stLatlng,List<double> enLatlng) {
+                 Navigator.pushNamed(
+                   context,
+                   "/d",
+                   arguments:{"nasrCity_Badr":[stLatlng,enLatlng],
+                   "drawRoute":true});
+              //         MaterialPageRoute(builder: (context) => MyHomePage(),
+              //                 settings: RouteSettings(
+              //             arguments: {"nasrCity_Badr":[[30.0324825,31.338229],[30.1350694,31.7117137]]
+              //             ,"drawRoute":true},
+              //           ),
+              //  ),
+              //       ); 
+    }
     Future<void> _goToTheLake() async {
     final GoogleMapController controller = await _controller.future;
     controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
@@ -303,7 +323,7 @@ class DriverForm extends StatelessWidget {
  Future<void> _route(BuildContext context) {
                  Navigator.pushNamed(
                    context,
-                   "/c",
+                   "/d",
                    arguments:{"nasrCity_Badr":[[30.0324825,31.338229],[30.1350694,31.7117137]],
                    "drawRoute":true});
               //         MaterialPageRoute(builder: (context) => MyHomePage(),

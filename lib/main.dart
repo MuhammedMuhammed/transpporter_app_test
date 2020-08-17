@@ -7,9 +7,21 @@ import 'package:geolocator/geolocator.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:catcher/catcher.dart';
 import 'package:transpporter_app_test/availableTripsView.dart';
+import 'package:transpporter_app_test/databaseModels/userTrips.dart';
 import 'MapAdapter/mapHolder.dart';
 import 'Login.dart';
 import 'databaseModels/users.dart';
+
+List<usertrips> usersOfAtrip =[
+new usertrips(id: 1,
+tripId: 1,
+userId:1,
+passengerNum:1,
+amount:22,
+isfinished:false,
+hasDiscount:false)
+];
+
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
@@ -130,25 +142,25 @@ class _MyHomePageState extends State<MyHomePage> {
              ListView(
                 
                children: [
-                MaterialButton(
+                ListTile(
                   
-                  child: new Text("Home"),
-                  onPressed: (){
+                  title: new Text("Home"),
+                  onTap: (){
 
                   },
                 ),
-                MaterialButton(
-                  child: new Text("Routes"),
-                  onPressed: () => Navigator.of(context).pushNamed("/a"),
+                ListTile(
+                  title: new Text("Routes"),
+                  onTap: () => Navigator.of(context).pushNamed("/e"),
                   
                 ),
-                MaterialButton(
-                  child: new Text("Your Trips"),
-                  onPressed: () => Navigator.of(context).pushNamed("/b"),
+                ListTile(
+                  title: new Text("Your Trips"),
+                  onTap: () => Navigator.of(context).pushNamed("/b"),
                 ),
-                MaterialButton(
-                  child: new Text("logout"),
-                  onPressed: () => Navigator.popUntil(context, ModalRoute.withName('/')),
+                ListTile(
+                  title: new Text("logout"),
+                  onTap: () => Navigator.popUntil(context, ModalRoute.withName('/')),
                 ),
               ]),
               )
@@ -160,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body:Wrap(
       children:[
         Container(
-        height: MediaQuery.of(context).size.height -200,
+        height: (MediaQuery.of(context).size.height/2)*1.5,
         child: GoogleMap(
         
         mapType: MapType.normal,
@@ -171,8 +183,9 @@ class _MyHomePageState extends State<MyHomePage> {
           print("List:"+ curUser.toString());
            print("check args:"+args.toString());
 
-          if(args != null || args.isEmpty == false )
+          if(args != null  )
           {
+            if(args.isEmpty == false){
             if(args["drawRoute"]){
             var s =args["nasrCity_Badr"][0];
             var r = args["drawRoute"];
@@ -181,6 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             });
                   
+            }
             }
           }
         },
@@ -191,15 +205,17 @@ class _MyHomePageState extends State<MyHomePage> {
       Positioned(
         bottom: 0,
         child:Container(
-          padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.height/9, 5, 5, 5),
-          height: 114,
+          height: (MediaQuery.of(context).size.height/2)/3,
           width: MediaQuery.of(context).size.width,
           color: Colors.transparent,
         child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children:[
-            Ink(
-              
+      Padding(
+              padding: EdgeInsets.all(5),
+
+            child:Ink(
               width: 48,
             height:48 ,
             decoration: ShapeDecoration(
@@ -221,6 +237,35 @@ class _MyHomePageState extends State<MyHomePage> {
                       Navigator.of(context).pushNamed("/e");
                 
               }),
+            )
+            ),
+                
+          Padding(
+        padding: EdgeInsets.all(5),
+
+            child:Ink(
+            width: 48,
+            height:48 ,
+            decoration: ShapeDecoration(
+              shape: CircleBorder(),
+              color:Color.fromRGBO(255, 255, 255, 1),
+              shadows:[
+                 BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius:5,
+                  blurRadius: 7,
+                  offset: Offset(0, 3)     
+                )
+                ]
+              ),
+            child:IconButton(
+              alignment: Alignment.center,
+              icon: Icon(Icons.directions_bus), 
+              onPressed: (){
+                      // Navigator.of(context).pushNamed("/e");
+                
+              }),
+            )
             )
         ]),
       ),
@@ -288,7 +333,7 @@ Marker startMarker = Marker(
     title: 'Start',
     snippet: _startAddress,
   ),
-  icon: BitmapDescriptor.defaultMarker,
+  icon: BitmapDescriptor.defaultMarker
 );
     
     // Destination Location Marker
